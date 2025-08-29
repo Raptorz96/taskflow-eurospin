@@ -134,7 +134,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <Plus className="w-5 h-5 text-eurospin-blue" />
+            <Plus className="w-5 h-5 text-blue-600" />
             <h2 className="text-lg font-semibold text-gray-900">
               {editTask ? 'Modifica Task' : 'Nuovo Task'}
             </h2>
@@ -162,7 +162,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               required
               value={formData.titolo}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               placeholder="es. Controllo temperature frigoriferi"
               maxLength={100}
             />
@@ -179,7 +179,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               value={formData.descrizione}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
               placeholder="Descrizione dettagliata del task (opzionale)"
               maxLength={500}
             />
@@ -230,7 +230,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 min="5"
                 max="480"
                 step="5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               />
             </div>
 
@@ -246,7 +246,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 required
                 value={formData.reparto}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               >
                 <option value="">Seleziona</option>
                 {reparti.map((reparto) => (
@@ -271,7 +271,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                   onClick={() => setFormData(prev => ({ ...prev, fascia_oraria: fascia.value }))}
                   className={`p-3 rounded-lg border-2 transition-all ${
                     formData.fascia_oraria === fascia.value
-                      ? 'border-eurospin-blue bg-blue-50 text-eurospin-blue'
+                      ? 'border-blue-600 bg-blue-50 text-blue-600'
                       : 'border-gray-200 hover:border-gray-300 text-gray-700'
                   }`}
                 >
@@ -298,7 +298,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               value={formData.data_scadenza}
               onChange={handleChange}
               min={getMinDate()}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             />
           </div>
 
@@ -314,7 +314,7 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 name="assegnato_a"
                 value={formData.assegnato_a}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
               >
                 <option value="">Non assegnato</option>
                 <option value={currentUser.id}>Me stesso</option>

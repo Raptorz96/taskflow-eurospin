@@ -159,7 +159,7 @@ const ProductAlerts = ({ currentUser }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-eurospin-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Caricamento avvisi prodotti...</p>
         </div>
       </div>
@@ -339,7 +339,7 @@ const ProductAlerts = ({ currentUser }) => {
                   required
                   value={newAlert.nome_prodotto}
                   onChange={(e) => setNewAlert(prev => ({ ...prev, nome_prodotto: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                   placeholder="es. Mozzarella di Bufala"
                 />
               </div>
@@ -355,7 +355,7 @@ const ProductAlerts = ({ currentUser }) => {
                     required
                     value={newAlert.data_scadenza}
                     onChange={(e) => setNewAlert(prev => ({ ...prev, data_scadenza: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     min={new Date().toISOString().split('T')[0]}
                   />
                 </div>
@@ -368,7 +368,7 @@ const ProductAlerts = ({ currentUser }) => {
                     id="giorni_preavviso"
                     value={newAlert.giorni_preavviso}
                     onChange={(e) => setNewAlert(prev => ({ ...prev, giorni_preavviso: parseInt(e.target.value) }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     <option value={1}>1 giorno</option>
                     <option value={2}>2 giorni</option>
@@ -388,7 +388,7 @@ const ProductAlerts = ({ currentUser }) => {
                   required
                   value={newAlert.reparto}
                   onChange={(e) => setNewAlert(prev => ({ ...prev, reparto: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                 >
                   <option value="">Seleziona reparto</option>
                   {reparti.map((reparto) => (

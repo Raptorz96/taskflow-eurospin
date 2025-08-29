@@ -141,7 +141,7 @@ const Dashboard = ({ currentUser }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-eurospin-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Caricamento dashboard...</p>
         </div>
       </div>
@@ -212,7 +212,7 @@ const Dashboard = ({ currentUser }) => {
                 onClick={() => setSelectedTimeSlot(slot.value)}
                 className={`flex-1 p-2 rounded-lg text-xs font-medium transition-colors ${
                   selectedTimeSlot === slot.value
-                    ? 'bg-eurospin-blue text-white'
+                    ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 } ${slot.value === currentSlot ? 'ring-2 ring-blue-300 ring-opacity-50' : ''}`}
               >
@@ -236,7 +236,7 @@ const Dashboard = ({ currentUser }) => {
           <div className="mb-6">
             <button
               onClick={() => setShowQuickActions(true)}
-              className="w-full p-4 bg-gradient-to-r from-eurospin-blue to-blue-600 text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95"
+              className="w-full p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all active:scale-95"
             >
               <div className="flex items-center justify-center space-x-2">
                 <Zap className="w-5 h-5" />
@@ -355,7 +355,7 @@ const Dashboard = ({ currentUser }) => {
       <div className="fixed bottom-20 right-4">
         <button
           onClick={() => setShowAddModal(true)}
-          className="w-14 h-14 bg-eurospin-blue text-white rounded-full shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center"
+          className="w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all active:scale-95 flex items-center justify-center"
         >
           <Plus className="w-6 h-6" />
         </button>

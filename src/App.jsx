@@ -92,10 +92,10 @@ function App() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="bg-eurospin-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl font-bold">E</span>
           </div>
-          <div className="w-8 h-8 border-2 border-eurospin-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Caricamento TaskFlow...</p>
         </div>
       </div>

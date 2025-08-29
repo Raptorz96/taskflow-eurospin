@@ -73,7 +73,7 @@ const Login = ({ onLogin }) => {
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="bg-eurospin-blue text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-2xl font-bold">E</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">TaskFlow</h1>
@@ -88,7 +88,7 @@ const Login = ({ onLogin }) => {
                 type="button"
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                   isLogin
-                    ? 'bg-white text-eurospin-blue shadow-sm'
+                    ? 'bg-white text-blue-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
                 onClick={() => {
@@ -103,7 +103,7 @@ const Login = ({ onLogin }) => {
                 type="button"
                 className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all ${
                   !isLogin
-                    ? 'bg-white text-eurospin-blue shadow-sm'
+                    ? 'bg-white text-blue-600 shadow-sm'
                     : 'text-gray-600 hover:text-gray-800'
                 }`}
                 onClick={() => {
@@ -130,7 +130,7 @@ const Login = ({ onLogin }) => {
                   required={!isLogin}
                   value={formData.nome}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   placeholder="Mario Rossi"
                 />
               </div>
@@ -147,7 +147,7 @@ const Login = ({ onLogin }) => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                 placeholder="mario.rossi@eurospin.it"
               />
             </div>
@@ -163,7 +163,7 @@ const Login = ({ onLogin }) => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -180,7 +180,7 @@ const Login = ({ onLogin }) => {
                     name="ruolo"
                     value={formData.ruolo}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   >
                     {ruoli.map((ruolo) => (
                       <option key={ruolo.value} value={ruolo.value}>
@@ -200,7 +200,7 @@ const Login = ({ onLogin }) => {
                     value={formData.reparto}
                     onChange={handleChange}
                     required={!isLogin}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                   >
                     <option value="">Seleziona reparto</option>
                     {reparti.map((reparto) => (

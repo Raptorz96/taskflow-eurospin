@@ -193,7 +193,7 @@ const Tasks = ({ currentUser }) => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-2 border-eurospin-blue border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Caricamento task...</p>
         </div>
       </div>
@@ -212,7 +212,7 @@ const Tasks = ({ currentUser }) => {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`p-2 rounded-full transition-colors ${
                   showFilters || hasActiveFilters 
-                    ? 'bg-eurospin-blue text-white' 
+                    ? 'bg-blue-600 text-white' 
                     : 'hover:bg-gray-100 text-gray-600'
                 }`}
               >
@@ -235,7 +235,7 @@ const Tasks = ({ currentUser }) => {
               placeholder="Cerca task..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-eurospin-blue focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
             />
           </div>
 
@@ -247,7 +247,7 @@ const Tasks = ({ currentUser }) => {
                 {hasActiveFilters && (
                   <button
                     onClick={resetFilters}
-                    className="text-sm text-eurospin-blue hover:text-blue-700"
+                    className="text-sm text-blue-600 hover:text-blue-700"
                   >
                     Reset
                   </button>
@@ -263,7 +263,7 @@ const Tasks = ({ currentUser }) => {
                   <select
                     value={filters.stato}
                     onChange={(e) => setFilters(prev => ({ ...prev, stato: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     {stati.map(stato => (
                       <option key={stato.value} value={stato.value}>
@@ -281,7 +281,7 @@ const Tasks = ({ currentUser }) => {
                   <select
                     value={filters.reparto}
                     onChange={(e) => setFilters(prev => ({ ...prev, reparto: e.target.value }))}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                   >
                     {reparti.map(reparto => (
                       <option key={reparto.value} value={reparto.value}>
@@ -300,7 +300,7 @@ const Tasks = ({ currentUser }) => {
                     <select
                       value={filters.priorita}
                       onChange={(e) => setFilters(prev => ({ ...prev, priorita: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                       {priorita.map(prio => (
                         <option key={prio.value} value={prio.value}>
@@ -318,7 +318,7 @@ const Tasks = ({ currentUser }) => {
                     <select
                       value={filters.assegnato_a}
                       onChange={(e) => setFilters(prev => ({ ...prev, assegnato_a: e.target.value }))}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                       <option value="all">Tutti</option>
                       <option value="me">Assegnati a me</option>
@@ -337,7 +337,7 @@ const Tasks = ({ currentUser }) => {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                       {sortOptions.map(option => (
                         <option key={option.value} value={option.value}>
@@ -354,7 +354,7 @@ const Tasks = ({ currentUser }) => {
                     <select
                       value={sortOrder}
                       onChange={(e) => setSortOrder(e.target.value)}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-eurospin-blue"
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
                     >
                       <option value="desc">Decrescente</option>
                       <option value="asc">Crescente</option>

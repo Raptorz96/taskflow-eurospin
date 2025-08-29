@@ -6,7 +6,7 @@ const BottomNav = ({ activeTab, onTabChange }) => {
       id: 'dashboard',
       label: 'Home',
       icon: Home,
-      color: 'text-eurospin-blue'
+      color: 'text-blue-600'
     },
     {
       id: 'tasks',

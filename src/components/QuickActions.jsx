@@ -162,7 +162,7 @@ const QuickActions = ({ currentUser, onTaskCreated, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <div className="flex items-center space-x-2">
-            <Zap className="w-5 h-5 text-eurospin-blue" />
+            <Zap className="w-5 h-5 text-blue-600" />
             <h2 className="text-lg font-semibold text-gray-900">
               Azioni Rapide
             </h2>
