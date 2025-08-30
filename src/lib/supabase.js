@@ -172,6 +172,134 @@ export const createProductAlert = async (alertData) => {
   return { data, error }
 }
 
+// Order functions
+export const getOrdiniConfig = async () => {
+  const { data, error } = await supabase
+    .from('ordini_config')
+    .select('*')
+    .eq('attivo', true)
+    .order('tipo_ordine')
+  return { data, error }
+}
+
+export const getOrdiniOggi = async (oggi = new Date()) => {
+  const today = oggi.toISOString().split('T')[0]
+  const currentDay = oggi.getDay()
+  const currentTime = oggi.toTimeString().split(' ')[0]
+  
+  // Get orders for today based on configuration
+  const { data: config, error: configError } = await supabase
+    .from('ordini_config')
+    .select('*')
+    .eq('attivo', true)
+  
+  if (configError) return { data: null, error: configError }
+  
+  const ordersForToday = []
+  
+  // Check each order type
+  for (const orderConfig of config) {
+    let shouldOrderToday = false
+    
+    if (orderConfig.tipo_ordine === 'sala') {
+      // Sala orders on specific days
+      shouldOrderToday = orderConfig.giorno_ordine === currentDay
+    } else if (orderConfig.tipo_ordine === 'surgelati') {
+      // Surgelati every day except Saturday (6)
+      shouldOrderToday = currentDay !== 6
+    } else if (orderConfig.tipo_ordine === 'pesce') {
+      // Pesce on Monday, Wednesday, Friday
+      shouldOrderToday = orderConfig.giorno_ordine === currentDay
+    }
+    
+    if (shouldOrderToday) {
+      // Check if order already exists for today
+      const { data: existingOrder } = await supabase
+        .from('ordini_log')
+        .select('*')
+        .eq('tipo_ordine', orderConfig.tipo_ordine)
+        .eq('data_ordine', today)
+        .single()
+      
+      if (!existingOrder) {
+        // Create new order for today
+        const { data: newOrder, error: insertError } = await supabase
+          .from('ordini_log')
+          .insert([{
+            tipo_ordine: orderConfig.tipo_ordine,
+            data_ordine: today,
+            stato: 'da_fare'
+          }])
+          .select()
+          .single()
+        
+        if (!insertError && newOrder) {
+          ordersForToday.push({
+            ...newOrder,
+            config: orderConfig
+          })
+        }
+      } else {
+        ordersForToday.push({
+          ...existingOrder,
+          config: orderConfig
+        })
+      }
+    }
+  }
+  
+  return { data: ordersForToday, error: null }
+}
+
+export const completeOrdine = async (ordineId, userId, note = null) => {
+  const { data, error } = await supabase
+    .from('ordini_log')
+    .update({
+      stato: 'completato',
+      ora_completamento: new Date().toISOString(),
+      completato_da: userId,
+      note: note
+    })
+    .eq('id', ordineId)
+    .select()
+  return { data, error }
+}
+
+export const startOrdine = async (ordineId, userId) => {
+  const { data, error } = await supabase
+    .from('ordini_log')
+    .update({
+      stato: 'in_corso',
+      ora_inizio: new Date().toISOString()
+    })
+    .eq('id', ordineId)
+    .select()
+  return { data, error }
+}
+
+export const updateRipassoOrdine = async (ordineId, ripassoFatto) => {
+  const { data, error } = await supabase
+    .from('ordini_log')
+    .update({
+      ripasso_fatto: ripassoFatto
+    })
+    .eq('id', ordineId)
+    .select()
+  return { data, error }
+}
+
+export const getOrdiniLog = async (limit = 50) => {
+  const { data, error } = await supabase
+    .from('ordini_log')
+    .select(`
+      *,
+      completato_profile:profiles!ordini_log_completato_da_fkey(nome)
+    `)
+    .order('data_ordine', { ascending: false })
+    .limit(limit)
+  return { data, error }
+}
+
 // Real-time subscriptions
 export const subscribeToTasks = (callback) => {
   return supabase

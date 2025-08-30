@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { Plus, Zap, Calendar, BarChart3, RefreshCw, Filter, Clock, CheckCircle, AlertCircle } from 'lucide-react'
-import { getTasks, subscribeToTasks } from '../lib/supabase'
+import { getTasks, subscribeToTasks, getOrdiniOggi } from '../lib/supabase'
 import TaskCard from './TaskCard'
 import AddTaskModal from './AddTaskModal'
 import QuickActions from './QuickActions'
+import OrderManager from './OrderManager'
 
 const Dashboard = ({ currentUser }) => {
   const [tasks, setTasks] = useState([])
@@ -14,6 +15,7 @@ const Dashboard = ({ currentUser }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showQuickActions, setShowQuickActions] = useState(false)
   const [lastRefresh, setLastRefresh] = useState(new Date())
+  const [hasOrdersToday, setHasOrdersToday] = useState(false)
 
   const timeSlots = [
     { value: 'all', label: 'Tutti', icon: '📋' },
@@ -24,6 +26,7 @@ const Dashboard = ({ currentUser }) => {
 
   useEffect(() => {
     loadTasks()
+    checkOrdersToday()
     
     // Set up real-time subscription
     const subscription = subscribeToTasks(() => {
@@ -34,6 +37,15 @@ const Dashboard = ({ currentUser }) => {
       subscription?.unsubscribe()
     }
   }, [selectedTimeSlot])
+
+  const checkOrdersToday = async () => {
+    try {
+      const { data } = await getOrdiniOggi()
+      setHasOrdersToday(data && data.length > 0)
+    } catch (error) {
+      console.error('Error checking orders:', error)
+    }
+  }
 
   const loadTasks = async (showRefreshIndicator = false) => {
     try {
@@ -231,6 +243,21 @@ const Dashboard = ({ currentUser }) => {
 
       {/* Content */}
       <div className="max-w-lg mx-auto p-4">
+        {/* Order Management Banner */}
+        {hasOrdersToday && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-center justify-center space-x-2">
+              <Calendar className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium text-blue-800">
+                Ci sono ordini programmati per oggi
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Order Manager */}
+        <OrderManager currentUser={currentUser} />
+
         {/* Quick Actions (for managers) */}
         {['responsabile', 'admin'].includes(currentUser.ruolo) && (
           <div className="mb-6">

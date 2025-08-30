@@ -196,6 +196,69 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
+-- Create orders configuration table
+create table if not exists ordini_config (
+  id uuid default gen_random_uuid() primary key,
+  tipo_ordine text not null check (tipo_ordine in ('sala', 'surgelati', 'pesce')),
+  giorno_ordine integer, -- 0=dom, 1=lun...
+  giorno_consegna integer,
+  orario_limite time,
+  orario_promemoria time,
+  attivo boolean default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Create orders log table
+create table if not exists ordini_log (
+  id uuid default gen_random_uuid() primary key,
+  tipo_ordine text not null,
+  data_ordine date not null,
+  stato text default 'da_fare' check (stato in ('da_fare', 'in_corso', 'completato', 'saltato')),
+  ora_inizio timestamp with time zone,
+  ora_completamento timestamp with time zone,
+  completato_da uuid references profiles(id),
+  note text,
+  ripasso_fatto boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS on order tables
+alter table ordini_config enable row level security;
+alter table ordini_log enable row level security;
+
+-- Policies for ordini_config
+create policy "Users can view orders config" on ordini_config
+  for select using (auth.role() = 'authenticated');
+
+create policy "Managers can manage orders config" on ordini_config
+  for all using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and ruolo in ('responsabile', 'admin')
+    )
+  );
+
+-- Policies for ordini_log
+create policy "Users can view orders log" on ordini_log
+  for select using (auth.role() = 'authenticated');
+
+create policy "Users can insert orders log" on ordini_log
+  for insert with check (auth.role() = 'authenticated');
+
+create policy "Users can update orders log" on ordini_log
+  for update using (auth.role() = 'authenticated');
+
+-- Insert default order configuration
+INSERT INTO ordini_config (tipo_ordine, giorno_ordine, giorno_consegna, orario_limite, orario_promemoria) VALUES
+('sala', 5, 1, '20:00', '14:30'), -- venerdì per lunedì
+('sala', 2, 3, '13:00', '07:00'), -- martedì per mercoledì  
+('sala', 4, 5, '13:00', '07:00'), -- giovedì per venerdì
+('surgelati', null, null, '20:00', '16:00'), -- tutti giorni tranne sabato
+('pesce', 1, 1, '07:30', '07:00'), -- lunedì
+('pesce', 3, 3, '07:30', '07:00'), -- mercoledì
+('pesce', 5, 5, '07:30', '07:00'); -- venerdì
+
 -- Indexes for performance
 create index if not exists idx_tasks_stato on tasks(stato);
 create index if not exists idx_tasks_reparto on tasks(reparto);
@@ -204,6 +267,9 @@ create index if not exists idx_tasks_assegnato_a on tasks(assegnato_a);
 create index if not exists idx_tasks_data_scadenza on tasks(data_scadenza);
 create index if not exists idx_comments_task_id on comments(task_id);
 create index if not exists idx_product_alerts_data_scadenza on product_alerts(data_scadenza);
+create index if not exists idx_ordini_log_data_ordine on ordini_log(data_ordine);
+create index if not exists idx_ordini_log_tipo_ordine on ordini_log(tipo_ordine);
+create index if not exists idx_ordini_log_stato on ordini_log(stato);
 
 -- Sample data (uncomment to insert)
 /*
