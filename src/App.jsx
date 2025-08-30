@@ -45,13 +45,20 @@ function App() {
   const loadUserProfile = async (userId) => {
     try {
       const { data, error } = await getUserProfile(userId)
-      if (error) throw error
+      if (error && error.code !== 'PGRST116') {
+        // PGRST116 = no rows returned, which is expected for new users
+        throw error
+      }
       
       if (data) {
         setUserProfile(data)
+      } else {
+        // Profile doesn't exist, redirect to login to create it
+        setUser(null)
       }
     } catch (error) {
       console.error('Error loading user profile:', error)
+      setUser(null) // Force logout on other errors
     } finally {
       setLoading(false)
     }
