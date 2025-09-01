@@ -222,9 +222,26 @@ create table if not exists ordini_log (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- Config giorni camion
+create table if not exists camion_config (
+  id uuid default gen_random_uuid() primary key,
+  giorno_settimana integer not null unique check (giorno_settimana >= 0 and giorno_settimana <= 6), -- 1=lun, 3=mer, 5=ven
+  orario_arrivo time default '21:00',
+  attivo boolean default true,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- Enable RLS on order tables
 alter table ordini_config enable row level security;
 alter table ordini_log enable row level security;
+alter table camion_config enable row level security;
+alter table scadenze_sala enable row level security;
+
+-- Modifica tabelle per aggiungere supporto condizione camion
+alter table tasks add column if not exists condizione_camion text check (condizione_camion in ('con_camion', 'senza_camion', 'sempre'));
+alter table tasks add column if not exists orario_suggerito time;
+alter table recurring_tasks add column if not exists condizione_camion text check (condizione_camion in ('con_camion', 'senza_camion', 'sempre'));
+alter table recurring_tasks add column if not exists orario_suggerito time;
 
 -- Policies for ordini_config
 create policy "Users can view orders config" on ordini_config
@@ -249,6 +266,29 @@ create policy "Users can insert orders log" on ordini_log
 create policy "Users can update orders log" on ordini_log
   for update using (auth.role() = 'authenticated');
 
+-- Policies for camion_config
+create policy "Users can view camion config" on camion_config
+  for select using (auth.role() = 'authenticated');
+
+create policy "Managers can manage camion config" on camion_config
+  for all using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and ruolo in ('responsabile', 'admin')
+    )
+  );
+
+-- Policies for scadenze_sala
+create policy "Users can view expiration dates" on scadenze_sala
+  for select using (auth.role() = 'authenticated');
+
+create policy "Users can insert expiration dates" on scadenze_sala
+  for insert with check (auth.role() = 'authenticated');
+
+create policy "Users can update expiration dates" on scadenze_sala
+  for update using (auth.role() = 'authenticated');
+
 -- Insert default order configuration
 INSERT INTO ordini_config (tipo_ordine, giorno_ordine, giorno_consegna, orario_limite, orario_promemoria) VALUES
 ('sala', 5, 1, '20:00', '14:30'), -- venerdì per lunedì
@@ -258,6 +298,65 @@ INSERT INTO ordini_config (tipo_ordine, giorno_ordine, giorno_consegna, orario_l
 ('pesce', 1, 1, '07:30', '07:00'), -- lunedì
 ('pesce', 3, 3, '07:30', '07:00'), -- mercoledì
 ('pesce', 5, 5, '07:30', '07:00'); -- venerdì
+
+-- Insert default camion configuration
+INSERT INTO camion_config (giorno_settimana) VALUES (1), (3), (5);
+
+-- Prodotti con scadenze
+create table if not exists scadenze_sala (
+  id uuid default gen_random_uuid() primary key,
+  nome_prodotto text not null,
+  codice_ean text,
+  lotto text,
+  data_scadenza date not null,
+  quantita integer default 1,
+  reparto text check (reparto in ('ortofrutta', 'macelleria', 'gastronomia', 'panetteria', 'magazzino', 'casse')),
+  ubicazione text, -- es: "Corsia 3, Scaffale B"
+  rimosso boolean default false,
+  rimosso_da uuid references profiles(id),
+  rimosso_il timestamp with time zone,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Vista per scadenze imminenti
+create or replace view scadenze_urgenti as
+select *, 
+  case 
+    when data_scadenza < current_date then 'scaduto'
+    when data_scadenza = current_date then 'oggi'
+    when data_scadenza <= current_date + 3 then 'critico'
+    when data_scadenza <= current_date + 7 then 'attenzione'
+    else 'ok'
+  end as urgenza
+from scadenze_sala
+where not rimosso;
+
+-- Create promo_config table
+create table if not exists promo_config (
+  id uuid default gen_random_uuid() primary key,
+  nome_promo text not null,
+  data_inizio date not null,
+  data_fine date not null,
+  corsie text[], -- array corsie interessate
+  stato text default 'preparazione' check (stato in ('preparazione', 'attiva', 'completata')),
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS on promo_config
+alter table promo_config enable row level security;
+
+-- Policies for promo_config
+create policy "Users can view promo config" on promo_config
+  for select using (auth.role() = 'authenticated');
+
+create policy "Managers can manage promo config" on promo_config
+  for all using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and ruolo in ('responsabile', 'admin')
+    )
+  );
 
 -- Indexes for performance
 create index if not exists idx_tasks_stato on tasks(stato);
@@ -270,6 +369,12 @@ create index if not exists idx_product_alerts_data_scadenza on product_alerts(da
 create index if not exists idx_ordini_log_data_ordine on ordini_log(data_ordine);
 create index if not exists idx_ordini_log_tipo_ordine on ordini_log(tipo_ordine);
 create index if not exists idx_ordini_log_stato on ordini_log(stato);
+create index if not exists idx_scadenze_sala_data_scadenza on scadenze_sala(data_scadenza);
+create index if not exists idx_scadenze_sala_reparto on scadenze_sala(reparto);
+create index if not exists idx_scadenze_sala_rimosso on scadenze_sala(rimosso);
+create index if not exists idx_promo_config_data_inizio on promo_config(data_inizio);
+create index if not exists idx_promo_config_data_fine on promo_config(data_fine);
+create index if not exists idx_promo_config_stato on promo_config(stato);
 
 -- Sample data (uncomment to insert)
 /*

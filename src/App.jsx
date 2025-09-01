@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard'
 import Tasks from './components/Tasks'
 import RecurringTasks from './components/RecurringTasks'
 import ProductAlerts from './components/ProductAlerts'
+import PromoManager from './components/PromoManager'
 import BottomNav from './components/BottomNav'
 
 function App() {
@@ -23,6 +24,9 @@ function App() {
       } else {
         setLoading(false)
       }
+    }).catch(error => {
+      console.error('Error in getCurrentUser:', error)
+      setLoading(false)
     })
 
     // Listen for auth changes
@@ -45,15 +49,21 @@ function App() {
   const loadUserProfile = async (userId) => {
     try {
       const { data, error } = await getUserProfile(userId)
-      if (error && error.code !== 'PGRST116') {
-        // PGRST116 = no rows returned, which is expected for new users
-        throw error
-      }
       
-      if (data) {
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No rows returned - profile doesn't exist
+          setUser(null)
+        } else if (error.code === 'TIMEOUT') {
+          // Query timeout - probably database connection issue
+          setUser(null)
+        } else {
+          // Other error
+          throw error
+        }
+      } else if (data) {
         setUserProfile(data)
       } else {
-        // Profile doesn't exist, redirect to login to create it
         setUser(null)
       }
     } catch (error) {
@@ -90,6 +100,8 @@ function App() {
         return <RecurringTasks currentUser={userProfile} />
       case 'alerts':
         return <ProductAlerts currentUser={userProfile} />
+      case 'promozioni':
+        return <PromoManager currentUser={userProfile} />
       default:
         return <Dashboard currentUser={userProfile} />
     }

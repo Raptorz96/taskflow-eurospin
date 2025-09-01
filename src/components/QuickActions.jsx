@@ -7,85 +7,117 @@ const QuickActions = ({ currentUser, onTaskCreated, onClose }) => {
   const [selectedTemplate, setSelectedTemplate] = useState(null)
 
   const quickTemplates = [
-    {
+    // MATTINA
+    { 
       id: 1,
-      title: '🧹 Pulizie Mattina',
-      description: 'Pulizia generale del reparto e sistemazione area',
-      priorita: 4,
-      tempo_stimato: 45,
-      fascia_oraria: 'mattina',
-      icon: '🧹',
-      color: 'from-blue-400 to-blue-600'
-    },
-    {
-      id: 2,
-      title: '🏷️ Cambio Promo',
-      description: 'Aggiornamento prezzi e cartellini promozionali',
-      priorita: 5,
-      tempo_stimato: 60,
-      fascia_oraria: 'mattina',
-      icon: '🏷️',
-      color: 'from-green-400 to-green-600'
-    },
-    {
-      id: 3,
-      title: '📅 Controllo Scadenze',
-      description: 'Verifica prodotti in scadenza e rimozione articoli scaduti',
-      priorita: 5,
-      tempo_stimato: 30,
-      fascia_oraria: 'mattina',
-      icon: '📅',
-      color: 'from-red-400 to-red-600'
-    },
-    {
-      id: 4,
-      title: '📊 Inventario Veloce',
-      description: 'Conteggio rapido prodotti principali',
-      priorita: 3,
-      tempo_stimato: 90,
-      fascia_oraria: 'pomeriggio',
-      icon: '📊',
-      color: 'from-purple-400 to-purple-600'
-    },
-    {
-      id: 5,
-      title: '📦 Riordino Scaffali',
-      description: 'Sistemazione prodotti secondo planogramma',
-      priorita: 3,
-      tempo_stimato: 120,
-      fascia_oraria: 'pomeriggio',
-      icon: '📦',
+      title: '🏪 Apertura Negozio', 
+      description: 'Accensione luci, apertura casse e controllo generale',
+      tempo_stimato: 20, 
+      priorita: 5, 
+      fascia_oraria: 'mattina', 
+      orario_suggerito: '07:40',
+      icon: '🏪',
       color: 'from-orange-400 to-orange-600'
     },
-    {
-      id: 6,
-      title: '💰 Chiusura Casse',
-      description: 'Controllo incassi e chiusura registratori',
-      priorita: 5,
-      tempo_stimato: 30,
-      fascia_oraria: 'sera',
-      icon: '💰',
-      color: 'from-yellow-400 to-yellow-600'
-    },
-    {
-      id: 7,
-      title: '🌙 Pulizie Sera',
-      description: 'Pulizia finale e preparazione per il giorno successivo',
-      priorita: 4,
-      tempo_stimato: 60,
-      fascia_oraria: 'sera',
-      icon: '🌙',
-      color: 'from-indigo-400 to-indigo-600'
-    },
-    {
-      id: 8,
-      title: '🌡️ Controllo Temperature',
+    { 
+      id: 2,
+      title: '🌡️ Controllo Temperature', 
       description: 'Verifica temperature frigoriferi e congelatori',
-      priorita: 5,
-      tempo_stimato: 20,
+      tempo_stimato: 20, 
+      priorita: 5, 
       fascia_oraria: 'mattina',
       icon: '🌡️',
       color: 'from-cyan-400 to-cyan-600'
+    },
+    { 
+      id: 3,
+      title: '🐟 Ordine Pesce', 
+      description: 'Effettuare ordine pesce per la giornata',
+      tempo_stimato: 15, 
+      priorita: 5, 
+      fascia_oraria: 'mattina', 
+      orario_suggerito: '07:00',
+      icon: '🐟',
+      color: 'from-blue-400 to-blue-600'
+    },
+    
+    // POMERIGGIO
+    { 
+      id: 4,
+      title: '📦 Ordine Sala', 
+      description: 'Ordinare prodotti per rifornimento sala vendita',
+      tempo_stimato: 45, 
+      priorita: 5, 
+      fascia_oraria: 'pomeriggio',
+      icon: '📦',
+      color: 'from-green-400 to-green-600'
+    },
+    { 
+      id: 5,
+      title: '🔄 Ripasso Sala', 
+      description: 'Controllo e sistemazione prodotti in sala',
+      tempo_stimato: 60, 
+      priorita: 4, 
+      fascia_oraria: 'pomeriggio',
+      icon: '🔄',
+      color: 'from-purple-400 to-purple-600'
+    },
+    { 
+      id: 6,
+      title: '❄️ Ordine Surgelati', 
+      description: 'Ordinare prodotti surgelati',
+      tempo_stimato: 30, 
+      priorita: 5, 
+      fascia_oraria: 'pomeriggio',
+      icon: '❄️',
+      color: 'from-indigo-400 to-indigo-600'
+    },
+    
+    // SERA CONDIZIONALE
+    { 
+      id: 7,
+      title: '🧹 Pulizie Negozio', 
+      description: 'Pulizia completa degli spazi vendita',
+      tempo_stimato: 60, 
+      priorita: 4, 
+      fascia_oraria: 'sera', 
+      condizione_camion: 'senza_camion', 
+      orario_suggerito: '19:00',
+      icon: '🧹',
+      color: 'from-blue-500 to-blue-700'
+    },
+    { 
+      id: 8,
+      title: '🚻 Pulizie Bagni+Parcheggio', 
+      description: 'Pulizia bagni clienti e area parcheggio',
+      tempo_stimato: 45, 
+      priorita: 4, 
+      fascia_oraria: 'sera', 
+      condizione_camion: 'con_camion', 
+      orario_suggerito: '19:00',
+      icon: '🚻',
+      color: 'from-yellow-500 to-yellow-700'
+    },
+    { 
+      id: 9,
+      title: '🏷️ Cambio Promo', 
+      description: 'Rimuovi vecchia e applica nuova promozione',
+      tempo_stimato: 90, 
+      priorita: 5, 
+      fascia_oraria: 'mattina',
+      icon: '🏷️',
+      color: 'from-pink-400 to-pink-600'
+    },
+    { 
+      id: 10,
+      title: '🔒 Chiusure', 
+      description: 'Chiusura casse, spegnimento luci e allarme',
+      tempo_stimato: 30, 
+      priorita: 5, 
+      fascia_oraria: 'sera', 
+      orario_suggerito: '20:00',
+      icon: '🔒',
+      color: 'from-red-400 to-red-600'
     }
   ]
 
@@ -110,7 +142,9 @@ const QuickActions = ({ currentUser, onTaskCreated, onClose }) => {
         fascia_oraria: template.fascia_oraria,
         stato: 'da_fare',
         creato_da: currentUser.id,
-        data_scadenza: new Date().toISOString().split('T')[0] // Today
+        data_scadenza: new Date().toISOString().split('T')[0], // Today
+        condizione_camion: template.condizione_camion || 'sempre',
+        orario_suggerito: template.orario_suggerito
       }
 
       const { data, error } = await createTask(taskData)

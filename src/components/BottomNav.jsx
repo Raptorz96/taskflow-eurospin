@@ -1,4 +1,4 @@
-import { Home, CheckSquare, Repeat, AlertTriangle } from 'lucide-react'
+import { Home, CheckSquare, Repeat, AlertTriangle, Tag } from 'lucide-react'
 
 const BottomNav = ({ activeTab, onTabChange }) => {
   const tabs = [
@@ -25,6 +25,12 @@ const BottomNav = ({ activeTab, onTabChange }) => {
       label: 'Avvisi',
       icon: AlertTriangle,
       color: 'text-orange-600'
+    },
+    {
+      id: 'promozioni',
+      label: 'Promo',
+      icon: Tag,
+      color: 'text-pink-600'
     }
   ]
 

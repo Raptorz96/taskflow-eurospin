@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key'
 
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Helper functions
@@ -36,12 +37,27 @@ export const signOut = async () => {
 }
 
 export const getUserProfile = async (userId) => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single()
-  return { data, error }
+  try {
+    // Add timeout to prevent hanging
+    const queryPromise = supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single()
+    
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Query timeout after 5 seconds')), 5000)
+    )
+    
+    const { data, error } = await Promise.race([queryPromise, timeoutPromise])
+    return { data, error }
+  } catch (err) {
+    if (err.message === 'Query timeout after 5 seconds') {
+      // Timeout - probably a connection issue
+      return { data: null, error: { code: 'TIMEOUT', message: 'Database query timeout' } }
+    }
+    return { data: null, error: err }
+  }
 }
 
 export const updateUserProfile = async (userId, updates) => {
@@ -183,72 +199,109 @@ export const getOrdiniConfig = async () => {
 }
 
 export const getOrdiniOggi = async (oggi = new Date()) => {
-  const today = oggi.toISOString().split('T')[0]
-  const currentDay = oggi.getDay()
-  const currentTime = oggi.toTimeString().split(' ')[0]
-  
-  // Get orders for today based on configuration
-  const { data: config, error: configError } = await supabase
-    .from('ordini_config')
-    .select('*')
-    .eq('attivo', true)
-  
-  if (configError) return { data: null, error: configError }
-  
-  const ordersForToday = []
-  
-  // Check each order type
-  for (const orderConfig of config) {
-    let shouldOrderToday = false
-    
-    if (orderConfig.tipo_ordine === 'sala') {
-      // Sala orders on specific days
-      shouldOrderToday = orderConfig.giorno_ordine === currentDay
-    } else if (orderConfig.tipo_ordine === 'surgelati') {
-      // Surgelati every day except Saturday (6)
-      shouldOrderToday = currentDay !== 6
-    } else if (orderConfig.tipo_ordine === 'pesce') {
-      // Pesce on Monday, Wednesday, Friday
-      shouldOrderToday = orderConfig.giorno_ordine === currentDay
-    }
-    
-    if (shouldOrderToday) {
-      // Check if order already exists for today
-      const { data: existingOrder } = await supabase
-        .from('ordini_log')
-        .select('*')
-        .eq('tipo_ordine', orderConfig.tipo_ordine)
-        .eq('data_ordine', today)
-        .single()
+  try {
+    // Add timeout to prevent hanging
+    const queryPromise = (async () => {
+      const today = oggi.toISOString().split('T')[0]
+      const currentDay = oggi.getDay()
+      const currentTime = oggi.toTimeString().split(' ')[0]
       
-      if (!existingOrder) {
-        // Create new order for today
-        const { data: newOrder, error: insertError } = await supabase
-          .from('ordini_log')
-          .insert([{
-            tipo_ordine: orderConfig.tipo_ordine,
-            data_ordine: today,
-            stato: 'da_fare'
-          }])
-          .select()
-          .single()
-        
-        if (!insertError && newOrder) {
-          ordersForToday.push({
-            ...newOrder,
-            config: orderConfig
-          })
+      // Get orders for today based on configuration
+      const { data: config, error: configError } = await supabase
+        .from('ordini_config')
+        .select('*')
+        .eq('attivo', true)
+      
+      if (configError) {
+        // If table doesn't exist, return empty array gracefully
+        if (configError.code === 'PGRST106' || 
+            configError.code === 'PGRST205' || 
+            configError.message?.includes('does not exist') ||
+            configError.message?.includes('schema cache')) {
+          return { data: [], error: null }
         }
-      } else {
-        ordersForToday.push({
-          ...existingOrder,
-          config: orderConfig
-        })
+        return { data: null, error: configError }
       }
+      
+      if (!config || config.length === 0) {
+        return { data: [], error: null }
+      }
+      
+      const ordersForToday = []
+      
+      // Check each order type
+      for (const orderConfig of config) {
+        let shouldOrderToday = false
+        
+        if (orderConfig.tipo_ordine === 'sala') {
+          // Sala orders on specific days
+          shouldOrderToday = orderConfig.giorno_ordine === currentDay
+        } else if (orderConfig.tipo_ordine === 'surgelati') {
+          // Surgelati every day except Saturday (6)
+          shouldOrderToday = currentDay !== 6
+        } else if (orderConfig.tipo_ordine === 'pesce') {
+          // Pesce on Monday, Wednesday, Friday
+          shouldOrderToday = orderConfig.giorno_ordine === currentDay
+        }
+        
+        if (shouldOrderToday) {
+          // Check if order already exists for today
+          const { data: existingOrder } = await supabase
+            .from('ordini_log')
+            .select('*')
+            .eq('tipo_ordine', orderConfig.tipo_ordine)
+            .eq('data_ordine', today)
+            .single()
+          
+          if (!existingOrder) {
+            // Create new order for today
+            const { data: newOrder, error: insertError } = await supabase
+              .from('ordini_log')
+              .insert([{
+                tipo_ordine: orderConfig.tipo_ordine,
+                data_ordine: today,
+                stato: 'da_fare'
+              }])
+              .select()
+              .single()
+            
+            if (!insertError && newOrder) {
+              ordersForToday.push({
+                ...newOrder,
+                config: orderConfig
+              })
+            }
+          } else {
+            ordersForToday.push({
+              ...existingOrder,
+              config: orderConfig
+            })
+          }
+        }
+      }
+      
+      return { data: ordersForToday, error: null }
+    })()
+    
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('Orders query timeout after 5 seconds')), 5000)
+    )
+    
+    return await Promise.race([queryPromise, timeoutPromise])
+  } catch (err) {
+    if (err.message === 'Orders query timeout after 5 seconds') {
+      return { data: [], error: { code: 'TIMEOUT', message: 'Orders query timeout' } }
     }
+    // Handle 404 or table doesn't exist errors
+    if (err.code === 'PGRST106' || 
+        err.code === 'PGRST205' || 
+        err.message?.includes('does not exist') || 
+        err.message?.includes('schema cache') || 
+        err.message?.includes('404')) {
+      return { data: [], error: null }
+    }
+    return { data: [], error: null } // Return empty array instead of error for better UX
   }
-  
-  return { data: ordersForToday, error: null }
 }
 
 export const completeOrdine = async (ordineId, userId, note = null) => {
@@ -297,6 +350,110 @@ export const getOrdiniLog = async (limit = 50) => {
     `)
     .order('data_ordine', { ascending: false })
     .limit(limit)
+  return { data, error }
+}
+
+// Expiration dates functions
+export const getScadenze = async (filters = {}) => {
+  let query = supabase
+    .from('scadenze_sala')
+    .select('*')
+    .eq('rimosso', false)
+    .order('data_scadenza', { ascending: true })
+
+  if (filters.reparto) {
+    query = query.eq('reparto', filters.reparto)
+  }
+
+  if (filters.urgenza) {
+    const today = new Date().toISOString().split('T')[0]
+    switch (filters.urgenza) {
+      case 'scaduto':
+        query = query.lt('data_scadenza', today)
+        break
+      case 'oggi':
+        query = query.eq('data_scadenza', today)
+        break
+      case 'critico':
+        const criticalDate = new Date()
+        criticalDate.setDate(criticalDate.getDate() + 3)
+        query = query.gte('data_scadenza', today).lte('data_scadenza', criticalDate.toISOString().split('T')[0])
+        break
+      case 'attenzione':
+        const attentionDate = new Date()
+        attentionDate.setDate(attentionDate.getDate() + 7)
+        query = query.gte('data_scadenza', today).lte('data_scadenza', attentionDate.toISOString().split('T')[0])
+        break
+    }
+  }
+
+  const { data, error } = await query
+  return { data, error }
+}
+
+export const getScadenzeUrgenti = async () => {
+  const { data, error } = await supabase
+    .from('scadenze_urgenti')
+    .select('*')
+    .order('data_scadenza', { ascending: true })
+  return { data, error }
+}
+
+export const getScadenzeStats = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('scadenze_urgenti')
+      .select('urgenza')
+    
+    if (error) return { data: null, error }
+    
+    const stats = {
+      scaduto: 0,
+      oggi: 0,
+      critico: 0,
+      attenzione: 0,
+      total: data.length
+    }
+    
+    data.forEach(item => {
+      if (stats[item.urgenza] !== undefined) {
+        stats[item.urgenza]++
+      }
+    })
+    
+    return { data: stats, error: null }
+  } catch (err) {
+    return { data: null, error: err }
+  }
+}
+
+export const addScadenza = async (scadenzaData) => {
+  const { data, error } = await supabase
+    .from('scadenze_sala')
+    .insert([scadenzaData])
+    .select()
+  return { data, error }
+}
+
+export const removeScadenza = async (scadenzaId, userId) => {
+  const { data, error } = await supabase
+    .from('scadenze_sala')
+    .update({
+      rimosso: true,
+      rimosso_da: userId,
+      rimosso_il: new Date().toISOString()
+    })
+    .eq('id', scadenzaId)
+    .select()
+  return { data, error }
+}
+
+export const updateScadenza = async (scadenzaId, updates) => {
+  const { data, error } = await supabase
+    .from('scadenze_sala')
+    .update(updates)
+    .eq('id', scadenzaId)
+    .select()
   return { data, error }
 }
 

@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import { Clock, User, Star, MessageCircle, Calendar, ChevronRight, CheckCircle, UserCheck } from 'lucide-react'
 import { updateTask } from '../lib/supabase'
 
-const TaskCard = ({ task, currentUser, onUpdate, onOpenComments, onAssign }) => {
+const TaskCard = ({ task, currentUser, onUpdate, onOpenComments, onAssign, isNearSuggestedTime = false }) => {
   const [isSwipeable, setIsSwipeable] = useState(true)
   const [swipeOffset, setSwipeOffset] = useState(0)
   const [isDragging, setIsDragging] = useState(false)
@@ -211,6 +211,8 @@ const TaskCard = ({ task, currentUser, onUpdate, onOpenComments, onAssign }) => 
         ref={cardRef}
         className={`card ${departmentInfo.color} transform transition-transform cursor-pointer select-none ${
           isDragging ? 'transition-none' : 'transition-transform duration-200'
+        } ${
+          isNearSuggestedTime ? 'ring-2 ring-orange-400 ring-offset-2 bg-orange-50' : ''
         }`}
         style={{ 
           transform: `translateX(${swipeOffset}px)`,
@@ -295,6 +297,17 @@ const TaskCard = ({ task, currentUser, onUpdate, onOpenComments, onAssign }) => 
                 <span className="truncate max-w-20">
                   {task.assegnato_profile.nome}
                 </span>
+              </div>
+            )}
+
+            {/* Suggested Time */}
+            {task.orario_suggerito && (
+              <div className={`flex items-center space-x-1 ${
+                isNearSuggestedTime ? 'text-orange-600 font-medium' : ''
+              }`}>
+                <Clock className="w-4 h-4" />
+                <span>{task.orario_suggerito}</span>
+                {isNearSuggestedTime && <span className="text-xs">⏰</span>}
               </div>
             )}
 

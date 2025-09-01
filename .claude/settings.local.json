@@ -6,7 +6,9 @@
       "Bash(npx tailwindcss init:*)",
       "Bash(mkdir:*)",
       "Bash(npm run build:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Read(/mnt/c/Users/marco/OneDrive/Immagini/Catture di schermata/**)",
+      "Read(/mnt/c/Users/marco/OneDrive/Immagini/Catture di schermata/**)"
     ],
     "deny": [],
     "ask": []

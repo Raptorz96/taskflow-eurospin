@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
-import { Plus, Zap, Calendar, BarChart3, RefreshCw, Filter, Clock, CheckCircle, AlertCircle } from 'lucide-react'
-import { getTasks, subscribeToTasks, getOrdiniOggi } from '../lib/supabase'
+import { Plus, Zap, Calendar, BarChart3, RefreshCw, Filter, Clock, CheckCircle, AlertCircle, Tag } from 'lucide-react'
+import { getTasks, subscribeToTasks, getOrdiniOggi, getScadenzeStats, supabase } from '../lib/supabase'
 import TaskCard from './TaskCard'
 import AddTaskModal from './AddTaskModal'
 import QuickActions from './QuickActions'
 import OrderManager from './OrderManager'
+import CamionIndicator from './CamionIndicator'
+import ProductAlerts from './ProductAlerts'
 
 const Dashboard = ({ currentUser }) => {
   const [tasks, setTasks] = useState([])
@@ -16,6 +18,9 @@ const Dashboard = ({ currentUser }) => {
   const [showQuickActions, setShowQuickActions] = useState(false)
   const [lastRefresh, setLastRefresh] = useState(new Date())
   const [hasOrdersToday, setHasOrdersToday] = useState(false)
+  const [hasCamion, setHasCamion] = useState(false)
+  const [expirationStats, setExpirationStats] = useState(null)
+  const [promoNotification, setPromoNotification] = useState(null)
 
   const timeSlots = [
     { value: 'all', label: 'Tutti', icon: '📋' },
@@ -27,6 +32,8 @@ const Dashboard = ({ currentUser }) => {
   useEffect(() => {
     loadTasks()
     checkOrdersToday()
+    loadExpirationStats()
+    checkPromoNotifications()
     
     // Set up real-time subscription
     const subscription = subscribeToTasks(() => {
@@ -44,6 +51,38 @@ const Dashboard = ({ currentUser }) => {
       setHasOrdersToday(data && data.length > 0)
     } catch (error) {
       console.error('Error checking orders:', error)
+    }
+  }
+
+  const loadExpirationStats = async () => {
+    try {
+      const { data, error } = await getScadenzeStats()
+      if (error) throw error
+      setExpirationStats(data)
+    } catch (error) {
+      console.error('Error loading expiration stats:', error)
+    }
+  }
+
+  const checkPromoNotifications = async () => {
+    try {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      const tomorrowStr = tomorrow.toISOString().split('T')[0]
+
+      const { data, error } = await supabase
+        .from('promo_config')
+        .select('*')
+        .eq('data_inizio', tomorrowStr)
+        .eq('stato', 'preparazione')
+
+      if (error) throw error
+      
+      if (data && data.length > 0) {
+        setPromoNotification(data[0])
+      }
+    } catch (error) {
+      console.error('Error checking promo notifications:', error)
     }
   }
 
@@ -103,6 +142,23 @@ const Dashboard = ({ currentUser }) => {
     console.log('Open comments for task:', task)
   }
 
+  const handleCamionChange = (camionState) => {
+    setHasCamion(camionState)
+  }
+
+  const isNearSuggestedTime = (orario_suggerito) => {
+    if (!orario_suggerito) return false
+    
+    const now = new Date()
+    const currentTime = now.getHours() * 60 + now.getMinutes()
+    
+    const [hours, minutes] = orario_suggerito.split(':').map(Number)
+    const suggestedTime = hours * 60 + minutes
+    
+    // Return true if within 30 minutes of suggested time
+    return Math.abs(currentTime - suggestedTime) <= 30
+  }
+
   const getTaskStats = () => {
     const total = tasks.length
     const completed = tasks.filter(t => t.stato === 'completato').length
@@ -136,8 +192,20 @@ const Dashboard = ({ currentUser }) => {
   }
 
   const filteredTasks = tasks.filter(task => {
-    if (selectedTimeSlot === 'all') return true
-    return task.fascia_oraria === selectedTimeSlot
+    // Time slot filter
+    if (selectedTimeSlot !== 'all' && task.fascia_oraria !== selectedTimeSlot) {
+      return false
+    }
+    
+    // Camion condition filter
+    if (task.condizione_camion === 'con_camion' && !hasCamion) {
+      return false
+    }
+    if (task.condizione_camion === 'senza_camion' && hasCamion) {
+      return false
+    }
+    
+    return true
   })
 
   const tasksByStatus = {
@@ -255,8 +323,51 @@ const Dashboard = ({ currentUser }) => {
           </div>
         )}
 
+        {/* Promotion Change Notification */}
+        {promoNotification && (
+          <div className="mb-4 p-3 bg-pink-50 border border-pink-200 rounded-lg">
+            <div className="flex items-center space-x-2">
+              <Tag className="w-4 h-4 text-pink-600" />
+              <div className="flex-1">
+                <span className="text-sm font-medium text-pink-800 block">
+                  Cambio promozione domani!
+                </span>
+                <span className="text-xs text-pink-700">
+                  {promoNotification.nome_promo} 
+                  {promoNotification.corsie && ` - Corsie: ${promoNotification.corsie.join(', ')}`}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Product Expiration Alert */}
+        {expirationStats && (expirationStats.scaduto > 0 || expirationStats.oggi > 0 || expirationStats.critico > 0) && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <AlertCircle className="w-4 h-4 text-red-600" />
+                <div>
+                  <span className="text-sm font-medium text-red-800 block">
+                    Prodotti in scadenza critici!
+                  </span>
+                  <span className="text-xs text-red-700">
+                    {expirationStats.scaduto > 0 && `${expirationStats.scaduto} scaduti`}
+                    {expirationStats.oggi > 0 && `${expirationStats.scaduto > 0 ? ', ' : ''}${expirationStats.oggi} oggi`}
+                    {expirationStats.critico > 0 && `${(expirationStats.scaduto > 0 || expirationStats.oggi > 0) ? ', ' : ''}${expirationStats.critico} critici`}
+                  </span>
+                </div>
+              </div>
+              <ProductAlerts currentUser={currentUser} />
+            </div>
+          </div>
+        )}
+
         {/* Order Manager */}
         <OrderManager currentUser={currentUser} />
+
+        {/* Camion Indicator */}
+        <CamionIndicator onCamionChange={handleCamionChange} />
 
         {/* Quick Actions (for managers) */}
         {['responsabile', 'admin'].includes(currentUser.ruolo) && (
@@ -315,6 +426,7 @@ const Dashboard = ({ currentUser }) => {
                       onUpdate={handleTaskUpdate}
                       onOpenComments={handleOpenComments}
                       onAssign={handleAssignTask}
+                      isNearSuggestedTime={isNearSuggestedTime(task.orario_suggerito)}
                     />
                   ))}
                 </div>
@@ -337,6 +449,7 @@ const Dashboard = ({ currentUser }) => {
                       onUpdate={handleTaskUpdate}
                       onOpenComments={handleOpenComments}
                       onAssign={handleAssignTask}
+                      isNearSuggestedTime={isNearSuggestedTime(task.orario_suggerito)}
                     />
                   ))}
                 </div>
@@ -359,6 +472,7 @@ const Dashboard = ({ currentUser }) => {
                       onUpdate={handleTaskUpdate}
                       onOpenComments={handleOpenComments}
                       onAssign={handleAssignTask}
+                      isNearSuggestedTime={isNearSuggestedTime(task.orario_suggerito)}
                     />
                   ))}
                   {tasksByStatus.completato.length > 5 && (
