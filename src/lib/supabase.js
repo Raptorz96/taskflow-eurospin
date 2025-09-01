@@ -474,3 +474,279 @@ export const subscribeToComments = (taskId, callback) => {
     )
     .subscribe()
 }
+
+// Inventory Management Functions
+
+// Products functions
+export const getProducts = async (filters = {}) => {
+  let query = supabase
+    .from('products')
+    .select('*')
+    .eq('attivo', true)
+    .order('nome', { ascending: true })
+
+  if (filters.reparto) {
+    query = query.eq('reparto', filters.reparto)
+  }
+  
+  if (filters.categoria) {
+    query = query.eq('categoria', filters.categoria)
+  }
+  
+  if (filters.search) {
+    query = query.or(`nome.ilike.%${filters.search}%,codice.ilike.%${filters.search}%,codice_ean.ilike.%${filters.search}%`)
+  }
+
+  const { data, error } = await query
+  return { data, error }
+}
+
+export const createProduct = async (productData) => {
+  const { data, error } = await supabase
+    .from('products')
+    .insert([productData])
+    .select()
+  return { data, error }
+}
+
+export const updateProduct = async (productId, updates) => {
+  const { data, error } = await supabase
+    .from('products')
+    .update(updates)
+    .eq('id', productId)
+    .select()
+  return { data, error }
+}
+
+export const searchProducts = async (searchTerm, limit = 10) => {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('attivo', true)
+    .or(`nome.ilike.%${searchTerm}%,codice.ilike.%${searchTerm}%,codice_ean.ilike.%${searchTerm}%`)
+    .limit(limit)
+  return { data, error }
+}
+
+// Inventory functions
+export const getInventory = async (filters = {}) => {
+  let query = supabase
+    .from('inventory')
+    .select(`
+      *,
+      product:products(*)
+    `)
+    .order('updated_at', { ascending: false })
+
+  if (filters.reparto) {
+    query = query.eq('product.reparto', filters.reparto)
+  }
+
+  const { data, error } = await query
+  return { data, error }
+}
+
+export const getInventoryByDepartment = async (filters = {}) => {
+  let query = supabase
+    .from('products')
+    .select(`
+      *,
+      inventory(quantita, updated_at, updated_by)
+    `)
+    .eq('attivo', true)
+    .order('nome', { ascending: true })
+
+  if (filters.reparto) {
+    query = query.eq('reparto', filters.reparto)
+  }
+
+  const { data, error } = await query
+  
+  if (error) return { data: null, error }
+  
+  // Flatten the data to match expected format
+  const flattenedData = data?.map(product => ({
+    ...product,
+    quantita: product.inventory?.[0]?.quantita || 0,
+    updated_at: product.inventory?.[0]?.updated_at || product.created_at,
+    updated_by: product.inventory?.[0]?.updated_by || null
+  })) || []
+  
+  return { data: flattenedData, error: null }
+}
+
+export const updateInventory = async (productId, updates) => {
+  const { data, error } = await supabase
+    .from('inventory')
+    .update(updates)
+    .eq('product_id', productId)
+    .select()
+  return { data, error }
+}
+
+export const getProductInventory = async (productId) => {
+  const { data, error } = await supabase
+    .from('inventory')
+    .select(`
+      *,
+      product:products(*),
+      updater:profiles!inventory_updated_by_fkey(nome)
+    `)
+    .eq('product_id', productId)
+    .single()
+  return { data, error }
+}
+
+// Stock movements functions
+export const getStockMovements = async (productId, options = {}) => {
+  let query = supabase
+    .from('stock_movements')
+    .select(`
+      *,
+      created_user:profiles!stock_movements_created_by_fkey(nome)
+    `)
+    .eq('product_id', productId)
+    .order('created_at', { ascending: false })
+
+  if (options.limit) {
+    query = query.limit(options.limit)
+  }
+
+  if (options.days) {
+    const daysAgo = new Date()
+    daysAgo.setDate(daysAgo.getDate() - options.days)
+    query = query.gte('created_at', daysAgo.toISOString())
+  }
+
+  const { data, error } = await query
+  return { data, error }
+}
+
+export const createStockMovement = async (movementData) => {
+  const { data, error } = await supabase
+    .from('stock_movements')
+    .insert([movementData])
+    .select()
+  return { data, error }
+}
+
+export const getRecentMovements = async (limit = 20) => {
+  const { data, error } = await supabase
+    .from('stock_movements')
+    .select(`
+      *,
+      product:products(nome, codice, unita_misura),
+      created_user:profiles!stock_movements_created_by_fkey(nome)
+    `)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  return { data, error }
+}
+
+// Inventory alerts functions
+export const getInventoryAlerts = async (filters = {}) => {
+  let query = supabase
+    .from('inventory_alerts')
+    .select(`
+      *,
+      product:products(*)
+    `)
+    .order('created_at', { ascending: false })
+
+  if (filters.unread_only) {
+    query = query.eq('is_read', false)
+  }
+
+  if (filters.alert_type) {
+    query = query.eq('alert_type', filters.alert_type)
+  }
+
+  const { data, error } = await query
+  return { data, error }
+}
+
+export const markAlertAsRead = async (alertId, userId) => {
+  const { data, error } = await supabase
+    .from('inventory_alerts')
+    .update({
+      is_read: true,
+      acknowledged_by: userId,
+      acknowledged_at: new Date().toISOString()
+    })
+    .eq('id', alertId)
+    .select()
+  return { data, error }
+}
+
+export const createInventoryAlert = async (alertData) => {
+  const { data, error } = await supabase
+    .from('inventory_alerts')
+    .insert([alertData])
+    .select()
+  return { data, error }
+}
+
+// Inventory summary functions
+export const getInventorySummary = async () => {
+  const { data, error } = await supabase
+    .from('inventory_summary')
+    .select('*')
+  return { data, error }
+}
+
+export const getDepartmentSummary = async (reparto) => {
+  const { data, error } = await supabase
+    .from('inventory_summary')
+    .select('*')
+    .eq('reparto', reparto)
+    .single()
+  return { data, error }
+}
+
+// Calculate consumption and update inventory metrics
+export const calculateConsumption = async (productId, days = 30) => {
+  const { data, error } = await supabase
+    .rpc('calculate_daily_consumption', {
+      p_product_id: productId,
+      p_days: days
+    })
+  return { data, error }
+}
+
+// Bulk operations
+export const bulkUpdateInventory = async (updates) => {
+  const movements = []
+  
+  for (const update of updates) {
+    movements.push({
+      product_id: update.product_id,
+      tipo: 'rettifica',
+      quantita_precedente: update.old_quantity,
+      quantita: update.new_quantity - update.old_quantity,
+      quantita_finale: update.new_quantity,
+      note: 'Aggiornamento di massa',
+      created_by: update.user_id
+    })
+  }
+  
+  const { data, error } = await supabase
+    .from('stock_movements')
+    .insert(movements)
+  return { data, error }
+}
+
+// Real-time subscriptions for inventory
+export const subscribeToInventory = (callback) => {
+  return supabase
+    .channel('inventory_changes')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory' }, callback)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'stock_movements' }, callback)
+    .subscribe()
+}
+
+export const subscribeToInventoryAlerts = (callback) => {
+  return supabase
+    .channel('inventory_alerts')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'inventory_alerts' }, callback)
+    .subscribe()
+}

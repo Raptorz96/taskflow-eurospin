@@ -1,19 +1,25 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
-import { supabase, getCurrentUser, getUserProfile } from './lib/supabase'
+import { supabase, getCurrentUser, getUserProfile, getInventoryAlerts } from './lib/supabase'
+import { useTheme } from './hooks/useTheme'
+import ThemeToggle from './components/ThemeToggle'
 import Login from './components/Login'
 import Dashboard from './components/Dashboard'
+import HomeScreen from './components/HomeScreen'
 import Tasks from './components/Tasks'
 import RecurringTasks from './components/RecurringTasks'
 import ProductAlerts from './components/ProductAlerts'
 import PromoManager from './components/PromoManager'
+import InventoryManager from './components/InventoryManager'
 import BottomNav from './components/BottomNav'
 
 function App() {
+  const { theme } = useTheme()
   const [user, setUser] = useState(null)
   const [userProfile, setUserProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [inventoryAlerts, setInventoryAlerts] = useState(0)
 
   useEffect(() => {
     // Check current session
@@ -45,6 +51,29 @@ function App() {
 
     return () => subscription.unsubscribe()
   }, [])
+
+  useEffect(() => {
+    // Load inventory alerts
+    if (userProfile) {
+      loadInventoryAlerts()
+      
+      // Set up interval to refresh alerts
+      const alertsInterval = setInterval(loadInventoryAlerts, 2 * 60 * 1000) // Every 2 minutes
+      
+      return () => clearInterval(alertsInterval)
+    }
+  }, [userProfile])
+
+  const loadInventoryAlerts = async () => {
+    try {
+      const { data, error } = await getInventoryAlerts({ unread_only: true })
+      if (!error && data) {
+        setInventoryAlerts(data.length)
+      }
+    } catch (error) {
+      console.error('Error loading inventory alerts:', error)
+    }
+  }
 
   const loadUserProfile = async (userId) => {
     try {
@@ -94,14 +123,16 @@ function App() {
     switch (activeTab) {
       case 'dashboard':
         return <Dashboard currentUser={userProfile} />
+      case 'home':
+        return <HomeScreen currentUser={userProfile} />
       case 'tasks':
         return <Tasks currentUser={userProfile} />
+      case 'magazzino':
+        return <InventoryManager currentUser={userProfile} />
       case 'recurring':
         return <RecurringTasks currentUser={userProfile} />
       case 'alerts':
         return <ProductAlerts currentUser={userProfile} />
-      case 'promozioni':
-        return <PromoManager currentUser={userProfile} />
       default:
         return <Dashboard currentUser={userProfile} />
     }
@@ -136,18 +167,21 @@ function App() {
         {/* Bottom Navigation */}
         <BottomNav 
           activeTab={activeTab} 
-          onTabChange={setActiveTab} 
+          onTabChange={setActiveTab}
+          inventoryAlerts={inventoryAlerts}
         />
 
-        {/* Logout Button - Hidden but accessible via settings */}
-        <button
-          onClick={handleLogout}
-          className="fixed top-4 right-4 p-2 text-gray-400 hover:text-gray-600 transition-colors z-50 bg-white rounded-full shadow-sm"
-          title="Logout"
-          style={{ display: 'none' }} // Hidden for now, can be made visible in settings
-        >
-          🚪
-        </button>
+        {/* Theme Toggle & Logout - Fixed position */}
+        <div className="fixed top-4 right-4 flex items-center space-x-2 z-50">
+          <ThemeToggle />
+          <button
+            onClick={handleLogout}
+            className="p-2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-400 transition-colors bg-white dark:bg-slate-800 rounded-full shadow-sm border border-gray-200 dark:border-slate-700"
+            title="Logout"
+          >
+            🚪
+          </button>
+        </div>
       </div>
     </Router>
   )
