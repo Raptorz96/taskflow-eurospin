@@ -2,7 +2,7 @@
   "name": "TaskFlow Eurospin",
   "short_name": "TaskFlow",
   "description": "Sistema di gestione task per supermercato Eurospin",
-  "start_url": "/",
+  "start_url": "/taskflow-eurospin/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0066CC",
@@ -11,7 +11,7 @@
   "lang": "it",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/taskflow-eurospin/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

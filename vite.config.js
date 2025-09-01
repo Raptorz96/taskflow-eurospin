@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/taskflow-eurospin/',
   plugins: [
     react(),
     VitePWA({
@@ -19,16 +20,16 @@ export default defineConfig({
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
-        scope: '/',
-        start_url: '/',
+        scope: '/taskflow-eurospin/',
+        start_url: '/taskflow-eurospin/',
         icons: [
           { 
-            src: '/icon-192.png', 
+            src: '/taskflow-eurospin/icon-192.png', 
             sizes: '192x192', 
             type: 'image/png' 
           },
           { 
-            src: '/icon-512.png', 
+            src: '/taskflow-eurospin/icon-512.png', 
             sizes: '512x512', 
             type: 'image/png' 
           }
