@@ -130,8 +130,10 @@ const Login = ({ onLogin }) => {
                   required={!isLogin}
                   value={formData.nome}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base"
                   placeholder="Mario Rossi"
+                  autoComplete="name"
+                  autoCapitalize="words"
                 />
               </div>
             )}
@@ -147,8 +149,13 @@ const Login = ({ onLogin }) => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base"
                 placeholder="mario.rossi@eurospin.it"
+                autoComplete="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
+                inputMode="email"
               />
             </div>
 
@@ -163,9 +170,13 @@ const Login = ({ onLogin }) => {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base"
                 placeholder="••••••••"
                 minLength={6}
+                autoComplete="current-password"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck="false"
               />
             </div>
 
@@ -180,7 +191,7 @@ const Login = ({ onLogin }) => {
                     name="ruolo"
                     value={formData.ruolo}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base"
                   >
                     {ruoli.map((ruolo) => (
                       <option key={ruolo.value} value={ruolo.value}>
@@ -200,7 +211,7 @@ const Login = ({ onLogin }) => {
                     value={formData.reparto}
                     onChange={handleChange}
                     required={!isLogin}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base"
                   >
                     <option value="">Seleziona reparto</option>
                     {reparti.map((reparto) => (
