@@ -257,7 +257,6 @@ const Login = ({ onLogin }) => {
           </div>
         </div>
       </div>
-      </div>
     </div>
   )
 }
