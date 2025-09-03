@@ -69,18 +69,7 @@ const Login = ({ onLogin }) => {
   }
 
   return (
-    <>
-      <style>{`
-        input[type="email"], input[type="password"], input[type="text"] {
-          -webkit-text-fill-color: #111827 !important;
-          opacity: 1 !important;
-        }
-        input[type="email"]:focus, input[type="password"]:focus, input[type="text"]:focus {
-          -webkit-text-fill-color: #111827 !important;
-          color: #111827 !important;
-        }
-      `}</style>
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -142,13 +131,6 @@ const Login = ({ onLogin }) => {
                   value={formData.nome}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{ 
-                  fontSize: '16px', 
-                  WebkitAppearance: 'none',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  caretColor: '#2563eb'
-                }}
                   placeholder="Mario Rossi"
                   autoComplete="name"
                   autoCapitalize="words"
@@ -168,13 +150,6 @@ const Login = ({ onLogin }) => {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{ 
-                  fontSize: '16px', 
-                  WebkitAppearance: 'none',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  caretColor: '#2563eb'
-                }}
                 placeholder="mario.rossi@eurospin.it"
                 autoComplete="email"
                 autoCapitalize="none"
@@ -196,13 +171,6 @@ const Login = ({ onLogin }) => {
                 value={formData.password}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{ 
-                  fontSize: '16px', 
-                  WebkitAppearance: 'none',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  caretColor: '#2563eb'
-                }}
                 placeholder="••••••••"
                 minLength={6}
                 autoComplete="current-password"
@@ -224,13 +192,6 @@ const Login = ({ onLogin }) => {
                     value={formData.ruolo}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{ 
-                  fontSize: '16px', 
-                  WebkitAppearance: 'none',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  caretColor: '#2563eb'
-                }}
                   >
                     {ruoli.map((ruolo) => (
                       <option key={ruolo.value} value={ruolo.value}>
@@ -251,13 +212,6 @@ const Login = ({ onLogin }) => {
                     onChange={handleChange}
                     required={!isLogin}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{ 
-                  fontSize: '16px', 
-                  WebkitAppearance: 'none',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  caretColor: '#2563eb'
-                }}
                   >
                     <option value="">Seleziona reparto</option>
                     {reparti.map((reparto) => (
@@ -304,7 +258,7 @@ const Login = ({ onLogin }) => {
         </div>
       </div>
       </div>
-    </>
+    </div>
   )
 }
 
