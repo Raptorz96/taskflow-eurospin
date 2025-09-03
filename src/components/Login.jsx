@@ -117,109 +117,77 @@ const Login = ({ onLogin }) => {
             </div>
           </div>
 
+          {/* DEBUG INPUT - RIMUOVERE DOPO TEST */}
+          <div className="mb-4 p-4 bg-yellow-100 border-2 border-yellow-400 rounded">
+            <p className="text-black mb-2">TEST INPUT (Debug):</p>
+            <input 
+              type="text" 
+              placeholder="Se vedi questo testo, funziona!"
+              className="w-full p-2 text-black bg-white border-2 border-black"
+              style={{ color: 'black !important' }}
+            />
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div>
-                <label htmlFor="nome" className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-gray-700 text-sm font-bold mb-2">
                   Nome completo
                 </label>
                 <input
                   type="text"
-                  id="nome"
-                  name="nome"
-                  required={!isLogin}
                   value={formData.nome}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                  style={{
-                    WebkitTextFillColor: '#111827',
-                    color: '#111827',
-                    backgroundColor: '#ffffff',
-                    fontSize: '16px',
-                    opacity: 1
-                  }}
+                  name="nome"
+                  required={!isLogin}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   placeholder="Mario Rossi"
-                  autoComplete="name"
-                  autoCapitalize="words"
                 />
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
                 Email
               </label>
               <input
                 type="email"
-                id="email"
-                name="email"
-                required
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{
-                  WebkitTextFillColor: '#111827',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  fontSize: '16px',
-                  opacity: 1
-                }}
-                placeholder="mario.rossi@eurospin.it"
-                autoComplete="email"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
-                inputMode="email"
+                name="email"
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                placeholder="email@esempio.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
                 Password
               </label>
               <input
                 type="password"
-                id="password"
-                name="password"
-                required
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                style={{
-                  WebkitTextFillColor: '#111827',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  fontSize: '16px',
-                  opacity: 1
-                }}
+                name="password"
+                required
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="••••••••"
                 minLength={6}
-                autoComplete="current-password"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
               />
             </div>
 
             {!isLogin && (
               <>
                 <div>
-                  <label htmlFor="ruolo" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
                     Ruolo
                   </label>
                   <select
-                    id="ruolo"
-                    name="ruolo"
                     value={formData.ruolo}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                    style={{
-                      WebkitTextFillColor: '#111827',
-                      color: '#111827',
-                      backgroundColor: '#ffffff',
-                      fontSize: '16px',
-                      opacity: 1
-                    }}
+                    name="ruolo"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   >
                     {ruoli.map((ruolo) => (
                       <option key={ruolo.value} value={ruolo.value}>
@@ -230,23 +198,15 @@ const Login = ({ onLogin }) => {
                 </div>
 
                 <div>
-                  <label htmlFor="reparto" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-gray-700 text-sm font-bold mb-2">
                     Reparto
                   </label>
                   <select
-                    id="reparto"
-                    name="reparto"
                     value={formData.reparto}
                     onChange={handleChange}
+                    name="reparto"
                     required={!isLogin}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent text-base text-gray-900 bg-white placeholder-gray-500"
-                    style={{
-                      WebkitTextFillColor: '#111827',
-                      color: '#111827',
-                      backgroundColor: '#ffffff',
-                      fontSize: '16px',
-                      opacity: 1
-                    }}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   >
                     <option value="">Seleziona reparto</option>
                     {reparti.map((reparto) => (

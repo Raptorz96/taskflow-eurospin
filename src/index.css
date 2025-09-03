@@ -217,77 +217,12 @@ body {
     @apply focus:ring-offset-slate-800;
   }
   
-  /* Mobile Input Visibility Fix - Force text color and remove webkit styles */
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="tel"],
-  input[type="url"],
-  input[type="search"],
-  input[type="number"],
-  input[type="date"],
-  input[type="time"],
-  input[type="datetime-local"],
-  textarea,
-  select {
-    -webkit-text-fill-color: #111827 !important;
-    color: #111827 !important;
-    -webkit-appearance: none !important;
-    -webkit-box-shadow: inset 0 0 0 1000px white !important;
+  /* NUCLEAR INPUT FIX - FORZA VISIBILITÀ ASSOLUTA */
+  input, textarea, select {
+    color: rgb(55, 65, 81) !important;
     background-color: white !important;
-    caret-color: #3B82F6 !important;
-    font-size: 16px !important; /* Prevent zoom on iOS */
-    min-height: 44px !important; /* Touch-friendly size */
-    padding: 12px 16px !important;
-  }
-  
-  /* Dark mode input styles */
-  [data-theme="dark"] input[type="text"],
-  [data-theme="dark"] input[type="email"],
-  [data-theme="dark"] input[type="password"],
-  [data-theme="dark"] input[type="tel"],
-  [data-theme="dark"] input[type="url"],
-  [data-theme="dark"] input[type="search"],
-  [data-theme="dark"] input[type="number"],
-  [data-theme="dark"] input[type="date"],
-  [data-theme="dark"] input[type="time"],
-  [data-theme="dark"] input[type="datetime-local"],
-  [data-theme="dark"] textarea,
-  [data-theme="dark"] select {
-    -webkit-text-fill-color: #F8FAFC !important;
-    color: #F8FAFC !important;
-    -webkit-box-shadow: inset 0 0 0 1000px #1E293B !important;
-    background-color: #1E293B !important;
-  }
-  
-  /* Fix for autofilled inputs */
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  input:-webkit-autofill:active {
-    -webkit-text-fill-color: #111827 !important;
-    -webkit-box-shadow: inset 0 0 0 1000px white !important;
-    background-color: white !important;
-  }
-  
-  [data-theme="dark"] input:-webkit-autofill,
-  [data-theme="dark"] input:-webkit-autofill:hover,
-  [data-theme="dark"] input:-webkit-autofill:focus,
-  [data-theme="dark"] input:-webkit-autofill:active {
-    -webkit-text-fill-color: #F8FAFC !important;
-    -webkit-box-shadow: inset 0 0 0 1000px #1E293B !important;
-    background-color: #1E293B !important;
-  }
-  
-  /* Placeholder text visibility */
-  input::placeholder,
-  textarea::placeholder {
-    color: #94A3B8 !important;
+    -webkit-text-fill-color: rgb(55, 65, 81) !important;
     opacity: 1 !important;
-  }
-  
-  [data-theme="dark"] input::placeholder,
-  [data-theme="dark"] textarea::placeholder {
-    color: #64748B !important;
+    font-size: 16px !important;
   }
 }

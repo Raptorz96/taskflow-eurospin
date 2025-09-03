@@ -49,13 +49,28 @@ function App() {
       }
     )
 
+    // Nuclear option - forza il colore via JS
+    const fixInputs = () => {
+      const inputs = document.querySelectorAll('input, textarea, select')
+      inputs.forEach(input => {
+        input.style.setProperty('color', '#374151', 'important')
+        input.style.setProperty('-webkit-text-fill-color', '#374151', 'important')
+        input.style.setProperty('background-color', '#ffffff', 'important')
+        input.style.setProperty('opacity', '1', 'important')
+      })
+    }
+    
+    fixInputs()
+    // Riapplica dopo ogni render
+    const interval = setInterval(fixInputs, 1000)
+    
     // Mobile input visibility fix - JavaScript fallback
     const handleInputFocus = (event) => {
       const input = event.target
       if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA' || input.tagName === 'SELECT') {
         // Force visible text color on focus
-        input.style.webkitTextFillColor = '#111827'
-        input.style.color = '#111827'
+        input.style.webkitTextFillColor = '#374151'
+        input.style.color = '#374151'
         input.style.backgroundColor = '#ffffff'
         input.style.opacity = '1'
       }
@@ -67,6 +82,7 @@ function App() {
     return () => {
       subscription.unsubscribe()
       document.removeEventListener('focusin', handleInputFocus, true)
+      clearInterval(interval)
     }
   }, [])
 

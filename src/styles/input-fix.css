@@ -1,0 +1,19 @@
+/* FIX GLOBALE INPUT - FORZA VISIBILITÀ */
+input, textarea, select {
+  color: rgb(55, 65, 81) !important;
+  background-color: white !important;
+  -webkit-text-fill-color: rgb(55, 65, 81) !important;
+  opacity: 1 !important;
+}
+
+/* Autofill fix */
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: rgb(55, 65, 81) !important;
+}
+
+/* Focus state */
+input:focus, textarea:focus, select:focus {
+  color: rgb(55, 65, 81) !important;
+  background-color: white !important;
+}

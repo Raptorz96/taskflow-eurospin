@@ -157,19 +157,11 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
             </label>
             <input
               type="text"
-              id="titolo"
               name="titolo"
               required
               value={formData.titolo}
               onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              style={{
-                WebkitTextFillColor: '#111827',
-                color: '#111827',
-                backgroundColor: '#ffffff',
-                fontSize: '16px',
-                opacity: 1
-              }}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               placeholder="es. Controllo temperature frigoriferi"
               maxLength={100}
             />
@@ -181,19 +173,11 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               Descrizione
             </label>
             <textarea
-              id="descrizione"
               name="descrizione"
               value={formData.descrizione}
               onChange={handleChange}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
-              style={{
-                WebkitTextFillColor: '#111827',
-                color: '#111827',
-                backgroundColor: '#ffffff',
-                fontSize: '16px',
-                opacity: 1
-              }}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline resize-none"
               placeholder="Descrizione dettagliata del task (opzionale)"
               maxLength={500}
             />
@@ -237,21 +221,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               </label>
               <input
                 type="number"
-                id="tempo_stimato"
                 name="tempo_stimato"
                 value={formData.tempo_stimato}
                 onChange={handleChange}
                 min="5"
                 max="480"
                 step="5"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                style={{
-                  WebkitTextFillColor: '#111827',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  fontSize: '16px',
-                  opacity: 1
-                }}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               />
             </div>
 
@@ -262,19 +238,11 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 Reparto *
               </label>
               <select
-                id="reparto"
                 name="reparto"
                 required
                 value={formData.reparto}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                style={{
-                  WebkitTextFillColor: '#111827',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  fontSize: '16px',
-                  opacity: 1
-                }}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               >
                 <option value="">Seleziona</option>
                 {reparti.map((reparto) => (
@@ -321,19 +289,11 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
             </label>
             <input
               type="date"
-              id="data_scadenza"
               name="data_scadenza"
               value={formData.data_scadenza}
               onChange={handleChange}
               min={getMinDate()}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-              style={{
-                WebkitTextFillColor: '#111827',
-                color: '#111827',
-                backgroundColor: '#ffffff',
-                fontSize: '16px',
-                opacity: 1
-              }}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
 
@@ -345,18 +305,10 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 Assegna a
               </label>
               <select
-                id="assegnato_a"
                 name="assegnato_a"
                 value={formData.assegnato_a}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                style={{
-                  WebkitTextFillColor: '#111827',
-                  color: '#111827',
-                  backgroundColor: '#ffffff',
-                  fontSize: '16px',
-                  opacity: 1
-                }}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               >
                 <option value="">Non assegnato</option>
                 <option value={currentUser.id}>Me stesso</option>
