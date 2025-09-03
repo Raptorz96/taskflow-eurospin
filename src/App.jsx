@@ -49,7 +49,25 @@ function App() {
       }
     )
 
-    return () => subscription.unsubscribe()
+    // Mobile input visibility fix - JavaScript fallback
+    const handleInputFocus = (event) => {
+      const input = event.target
+      if (input.tagName === 'INPUT' || input.tagName === 'TEXTAREA' || input.tagName === 'SELECT') {
+        // Force visible text color on focus
+        input.style.webkitTextFillColor = '#111827'
+        input.style.color = '#111827'
+        input.style.backgroundColor = '#ffffff'
+        input.style.opacity = '1'
+      }
+    }
+
+    // Add global focus listener for all inputs
+    document.addEventListener('focusin', handleInputFocus, true)
+
+    return () => {
+      subscription.unsubscribe()
+      document.removeEventListener('focusin', handleInputFocus, true)
+    }
   }, [])
 
   useEffect(() => {

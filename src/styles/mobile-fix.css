@@ -1,0 +1,121 @@
+/* AGGRESSIVE MOBILE INPUT FIX - Critical visibility issue resolution */
+
+/* Force text color on ALL input elements - override webkit autofill */
+input,
+textarea,
+select,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"] {
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  font-size: 16px !important; /* Prevent iOS auto-zoom */
+  opacity: 1 !important;
+}
+
+/* Override ALL autofill states - this is the main culprit */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+textarea:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  font-size: 16px !important;
+  opacity: 1 !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Focus states - ensure visibility */
+input:focus,
+textarea:focus,
+select:focus {
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  outline: 2px solid #3b82f6 !important;
+  border-color: #3b82f6 !important;
+  opacity: 1 !important;
+}
+
+/* Placeholder text */
+input::placeholder,
+textarea::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #9ca3af !important;
+}
+
+/* Force visibility on disabled states */
+input:disabled,
+textarea:disabled,
+select:disabled {
+  -webkit-text-fill-color: #6b7280 !important;
+  color: #6b7280 !important;
+  background-color: #f9fafb !important;
+  opacity: 1 !important;
+}
+
+/* Mobile Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  input,
+  textarea,
+  select {
+    -webkit-text-fill-color: #111827 !important;
+    -webkit-opacity: 1 !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Android Chrome specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input,
+  textarea,
+  select {
+    -webkit-text-fill-color: #111827 !important;
+    color: #111827 !important;
+    background-color: #ffffff !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Emergency override for any remaining invisible text */
+* input,
+* textarea,
+* select {
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+}
+
+/* Specific targeting for React components with common class patterns */
+.form-input,
+.input-field,
+[class*="input"],
+[class*="form"],
+[type="text"],
+[type="email"],
+[type="password"] {
+  -webkit-text-fill-color: #111827 !important;
+  color: #111827 !important;
+  background-color: #ffffff !important;
+  font-size: 16px !important;
+}

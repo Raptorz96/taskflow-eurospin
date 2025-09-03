@@ -163,6 +163,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               value={formData.titolo}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              style={{
+                WebkitTextFillColor: '#111827',
+                color: '#111827',
+                backgroundColor: '#ffffff',
+                fontSize: '16px',
+                opacity: 1
+              }}
               placeholder="es. Controllo temperature frigoriferi"
               maxLength={100}
             />
@@ -180,6 +187,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               onChange={handleChange}
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
+              style={{
+                WebkitTextFillColor: '#111827',
+                color: '#111827',
+                backgroundColor: '#ffffff',
+                fontSize: '16px',
+                opacity: 1
+              }}
               placeholder="Descrizione dettagliata del task (opzionale)"
               maxLength={500}
             />
@@ -231,6 +245,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 max="480"
                 step="5"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                style={{
+                  WebkitTextFillColor: '#111827',
+                  color: '#111827',
+                  backgroundColor: '#ffffff',
+                  fontSize: '16px',
+                  opacity: 1
+                }}
               />
             </div>
 
@@ -247,6 +268,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 value={formData.reparto}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                style={{
+                  WebkitTextFillColor: '#111827',
+                  color: '#111827',
+                  backgroundColor: '#ffffff',
+                  fontSize: '16px',
+                  opacity: 1
+                }}
               >
                 <option value="">Seleziona</option>
                 {reparti.map((reparto) => (
@@ -299,6 +327,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
               onChange={handleChange}
               min={getMinDate()}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+              style={{
+                WebkitTextFillColor: '#111827',
+                color: '#111827',
+                backgroundColor: '#ffffff',
+                fontSize: '16px',
+                opacity: 1
+              }}
             />
           </div>
 
@@ -315,6 +350,13 @@ const AddTaskModal = ({ currentUser, onTaskCreated, onClose, editTask = null }) 
                 value={formData.assegnato_a}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                style={{
+                  WebkitTextFillColor: '#111827',
+                  color: '#111827',
+                  backgroundColor: '#ffffff',
+                  fontSize: '16px',
+                  opacity: 1
+                }}
               >
                 <option value="">Non assegnato</option>
                 <option value={currentUser.id}>Me stesso</option>
